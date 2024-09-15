@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anxiety and Depression Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .question {
+            margin: 15px 0;
+        }
+        .submit-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Anxiety and Depression Test</h1>
+
+<h2>GAD-7: General Anxiety</h2>
+<div id="gad7-questions"></div>
+
+<h2>PHQ-9: Depression</h2>
+<div id="phq9-questions"></div>
+
+<button class="submit-btn" onclick="calculateScores()">Submit</button>
+
+<h3>Results</h3>
+<div id="results"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const gad7Questions = [
+            "Feeling nervous, anxious, or on edge",
+            "Not being able to stop or control worrying",
+            "Worrying too much about different things",
+            "Trouble relaxing",
+            "Being so restless that it’s hard to sit still",
+            "Becoming easily annoyed or irritable",
+            "Feeling afraid as if something awful might happen"
+        ];
+
+        const phq9Questions = [
+            "Little interest or pleasure in doing things",
+            "Feeling down, depressed, or hopeless",
+            "Trouble falling or staying asleep, or sleeping too much",
+            "Feeling tired or having little energy",
+            "Poor appetite or overeating",
+            "Feeling bad about yourself—or that you are a failure or have let yourself or your family down",
+            "Trouble concentrating on things, such as reading or watching TV",
+            "Moving or speaking so slowly that other people could have noticed? Or the opposite—being fidgety or restless?",
+            "Thoughts that you would be better off dead or of hurting yourself in some way"
+        ];
+
+        function renderQuestions() {
+            const gad7Container = document.getElementById('gad7-questions');
+            const phq9Container = document.getElementById('phq9-questions');
+            gad7Questions.forEach((question, index) => {
+                gad7Container.innerHTML += createQuestionHTML(question, index, 'gad7');
+            });
+            phq9Questions.forEach((question, index) => {
+                phq9Container.innerHTML += createQuestionHTML(question, index, 'phq9');
+            });
+        }
+
+        function createQuestionHTML(question, index, group) {
+            return `
+                <div class="question">
+                    <p>${question}</p>
+                    <label><input type="radio" name="${group}-${index}" value="0" required> Not at all</label>
+                    <label><input type="radio" name="${group}-${index}" value="1"> Several days</label>
+                    <label><input type="radio" name="${group}-${index}" value="2"> More than half the days</label>
+                    <label><input type="radio" name="${group}-${index}" value="3"> Nearly every day</label>
+                </div>
+            `;
+        }
+
+        function calculateScores() {
+            const gad7Score = calculateGroupScore('gad7', gad7Questions.length);
+            const phq9Score = calculateGroupScore('phq9', phq9Questions.length);
+
+            const gad7Percentage = (gad7Score / 21) * 100;
+            const phq9Percentage = (phq9Score / 27) * 100;
+
+            displayResults(gad7Percentage, phq9Percentage);
+        }
+
+        function calculateGroupScore(group, length) {
+            let score = 0;
+            for (let i = 0; i < length; i++) {
+                const value = document.querySelector(`input[name="${group}-${i}"]:checked`);
+                if (value) {
+                    score += parseInt(value.value);
+                }
+            }
+            return score;
+        }
+
+        function displayResults(gad7Percentage, phq9Percentage) {
+            const results = document.getElementById('results');
+            results.innerHTML = `
+                <p><strong>Anxiety Level (GAD-7):</strong> ${gad7Percentage.toFixed(2)}%</p>
+                <p><strong>Depression Level (PHQ-9):</strong> ${phq9Percentage.toFixed(2)}%</p>
+            `;
+        }
+
+        renderQuestions(); // Render questions after DOM is fully loaded
+    });
+</script>
+
+</body>
+</html>
